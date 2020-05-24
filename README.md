@@ -2,7 +2,7 @@
 POST /expenses
 
 {
-    date: date,
+    date: string,
     expense: string,
     amount: number
     source: string
