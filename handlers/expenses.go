@@ -17,7 +17,9 @@ func HandleExpense(w http.ResponseWriter, r *http.Request) {
 
 	switch method {
 	case "POST":
-		controllers.PostExpense(w, decoder)
+		controllers.PostExpense(w, decoder, main.ExpensesStore)
+	case "GET":
+		controllers.GetExpenses(w, main.ExpensesStore)
 	default:
 		w.WriteHeader(503)
 		w.Write([]byte("Service unavailable"))
