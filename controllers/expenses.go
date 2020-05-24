@@ -18,9 +18,8 @@ type response struct {
 	Message string
 }
 
-func PostExpense(w http.ResponseWriter, r *http.Request) {
+func PostExpense(w http.ResponseWriter, decoder *json.Decoder) {
 	fmt.Println("Post Expense")
-	decoder := json.NewDecoder(r.Body)
 
 	exp := Expense{}
 
