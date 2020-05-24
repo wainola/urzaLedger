@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type expense struct {
+type Expense struct {
 	Date    string
 	Expense string
 	Amount  int
@@ -22,7 +22,7 @@ func PostExpense(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Post Expense")
 	decoder := json.NewDecoder(r.Body)
 
-	exp := expense{}
+	exp := Expense{}
 
 	err := decoder.Decode(&exp)
 
