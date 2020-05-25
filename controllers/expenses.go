@@ -29,6 +29,8 @@ func PostExpense(w http.ResponseWriter, decoder *json.Decoder) {
 		panic(err)
 	}
 
+	fmt.Println(":::::::::::::", exp)
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	res := response{201, "Created"}

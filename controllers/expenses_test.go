@@ -11,31 +11,31 @@ import (
 
 func TestPostExpense(t *testing.T) {
 
-	data := Expense{
-		"2020-05-23",
-		"some payment",
-		3000,
-		"TP",
-	}
-	bytes, err := json.Marshal(data)
+	// data := Expense{
+	// 	"2020-05-23",
+	// 	"some payment",
+	// 	3000,
+	// 	"TP",
+	// }
+	data := strings.NewReader(`{"date": "2020-05-23", "expense": "pago de repuestos", "amount": 150000, "source": "tarjeta platinum" }`)
 
-	if err != nil {
-		panic(err)
-	}
-	transformedData := strings.NewReader(bytes)
+	decoder := json.NewDecoder(data)
 
-	fmt.Println("transformedData", transformedData)
-
-	req := httptest.NewRequest("POST", "/expense", transformedData)
-
-	req.Header.Add("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
-	PostExpense(w, req)
+	PostExpense(w, decoder)
 
 	resp := w.Result()
 	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println(resp.StatusCode)
-	fmt.Println(string(body))
+	fmt.Println(strings.Contains(string(body), "Created"))
+
+	if resp.StatusCode != 201 {
+		t.Errorf("PostExpense controler: got %d want 201", resp.StatusCode)
+	}
+
+	if !strings.Contains(string(body), "Created") {
+		t.Errorf(`PostExpense response body: got %s want "{"Code":201,"Message":"Created"}"`, body)
+	}
 
 }
