@@ -9,7 +9,7 @@ import (
 )
 
 func HandleExpense(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("HandleExpense")
+	fmt.Println("HandleExpense", r.Body)
 
 	method := r.Method
 	// decode json body
