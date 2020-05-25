@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"../controllers"
+	"urza/controllers"
 )
 
 func HandleExpense(w http.ResponseWriter, r *http.Request) {
@@ -17,9 +17,9 @@ func HandleExpense(w http.ResponseWriter, r *http.Request) {
 
 	switch method {
 	case "POST":
-		controllers.PostExpense(w, decoder, main.ExpensesStore)
+		controllers.PostExpense(w, decoder)
 	case "GET":
-		controllers.GetExpenses(w, main.ExpensesStore)
+		controllers.GetExpenses(w)
 	default:
 		w.WriteHeader(503)
 		w.Write([]byte("Service unavailable"))

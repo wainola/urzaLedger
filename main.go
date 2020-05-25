@@ -4,14 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"./controllers"
-	"./handlers"
+	"urza/handlers"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	expensesStore := controllers.NewInMemoryExpense()
 
 	r := mux.NewRouter()
 	r.HandleFunc("/expense", handlers.HandleExpense)
