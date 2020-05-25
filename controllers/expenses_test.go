@@ -11,12 +11,6 @@ import (
 
 func TestPostExpense(t *testing.T) {
 
-	// data := Expense{
-	// 	"2020-05-23",
-	// 	"some payment",
-	// 	3000,
-	// 	"TP",
-	// }
 	data := strings.NewReader(`{"date": "2020-05-23", "expense": "pago de repuestos", "amount": 150000, "source": "tarjeta platinum" }`)
 
 	decoder := json.NewDecoder(data)
