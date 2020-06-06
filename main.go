@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-
 	"urza/handlers"
 
 	"github.com/gorilla/mux"
@@ -12,7 +11,7 @@ import (
 func main() {
 
 	r := mux.NewRouter()
-	r.HandleFunc("/expense", handlers.HandleExpense)
+	r.HandleFunc("/expense", handlers.ExpensesRoute)
 	fmt.Println("Server running on port 3000")
 	http.ListenAndServe(":3000", r)
 }

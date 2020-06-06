@@ -4,24 +4,36 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-
-	"urza/controllers"
+	"urza/utils"
 )
 
-func HandleExpense(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("HandleExpense", r.Body)
+type PostExpenseBody struct {
+	Date    string
+	Expense string
+	Amount  int
+	Source  string
+}
 
+func PostExpense(w http.ResponseWriter, r *http.Request) {
+	body := r.Body
+
+	fmt.Println("body", body)
+	bodyToValidate := PostExpenseBody{}
+	err := json.NewDecoder(body).Decode(&bodyToValidate)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("body::", bodyToValidate)
+}
+
+func ExpensesRoute(w http.ResponseWriter, r *http.Request) {
 	method := r.Method
-	// decode json body
-	decoder := json.NewDecoder(r.Body)
 
 	switch method {
 	case "POST":
-		controllers.PostExpense(w, decoder)
-	case "GET":
-		controllers.GetExpenses(w)
-	default:
-		w.WriteHeader(503)
-		w.Write([]byte("Service unavailable"))
+		utils.ValidateHeader(w, r, PostExpense)
 	}
+
 }
