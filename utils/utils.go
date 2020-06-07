@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -24,7 +25,7 @@ func GoDotEnvVariable(key string) string {
 	return os.Getenv(key)
 }
 
-func ValidateHeader(w http.ResponseWriter, r *http.Request, f func(w http.ResponseWriter, r *http.Request)) {
+func ValidateHeader(w http.ResponseWriter, r *http.Request, f func(w http.ResponseWriter, r *http.Request, db *sql.DB)) {
 	header := r.Header.Get("client-name")
 
 	if header != "app-mobile" {
@@ -37,5 +38,17 @@ func ValidateHeader(w http.ResponseWriter, r *http.Request, f func(w http.Respon
 		json.NewEncoder(w).Encode(forbidenRes)
 	}
 
-	f(w, r)
+	dbInstance := InstanceDbConnection()
+
+	f(w, r, dbInstance)
+}
+
+func InstanceDbConnection() *sql.DB {
+	db, err := sql.Open("sqlite3", "./urza.db")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return db
 }
