@@ -96,7 +96,7 @@ func PostExpense(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode("Created")
+	json.NewEncoder(w).Encode(expenseToInsert)
 }
 
 func ExpensesRoute(w http.ResponseWriter, r *http.Request) {
