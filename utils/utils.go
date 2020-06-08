@@ -25,6 +25,10 @@ func GoDotEnvVariable(key string) string {
 	return os.Getenv(key)
 }
 
+func ResolveResponse(res Response, w http.ResponseWriter) {
+	json.NewEncoder(w).Encode(res)
+}
+
 func ValidateHeader(w http.ResponseWriter, r *http.Request, f func(w http.ResponseWriter, r *http.Request, db *sql.DB)) {
 	header := r.Header.Get("client-name")
 
@@ -35,7 +39,7 @@ func ValidateHeader(w http.ResponseWriter, r *http.Request, f func(w http.Respon
 			403,
 			"Forbidden",
 		}
-		json.NewEncoder(w).Encode(forbidenRes)
+		ResolveResponse(forbidenRes, w)
 	}
 
 	dbInstance := InstanceDbConnection()

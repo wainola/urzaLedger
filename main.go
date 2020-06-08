@@ -12,7 +12,7 @@ import (
 func main() {
 
 	r := mux.NewRouter()
-	r.HandleFunc("/expense", handlers.ExpensesRoute)
+	r.HandleFunc("/expense/{id}", handlers.ExpensesRoute)
 	fmt.Println("Server running on port 3000")
 	http.ListenAndServe(":3000", r)
 }
