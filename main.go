@@ -3,16 +3,20 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"urza/handlers"
+	"urza/models"
+	"urza/utils"
 
-	"github.com/gorilla/mux"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
 
-	r := mux.NewRouter()
-	r.HandleFunc("/expense/{id}", handlers.ExpensesRoute)
+	appDB := &models.AppDb{DB: utils.InstanceDbConnection()}
+
+	defer appDB.DB.Close()
+
+	r := buildRouter(appDB)
+
 	fmt.Println("Server running on port 3000")
 	http.ListenAndServe(":3000", r)
 }
