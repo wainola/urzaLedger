@@ -11,7 +11,7 @@ import (
 
 func main() {
 
-	appDB := &models.AppDb{DB: utils.InstanceDbConnection()}
+	appDB := &models.UrzaDB{DB: utils.InstanceDbConnection()}
 
 	defer appDB.DB.Close()
 

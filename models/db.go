@@ -2,6 +2,6 @@ package models
 
 import "database/sql"
 
-type AppDb struct {
+type UrzaDB struct {
 	DB *sql.DB
 }

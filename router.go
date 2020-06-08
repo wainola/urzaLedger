@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func buildRouter(db *models.AppDb) http.Handler {
+func buildRouter(db *models.UrzaDB) http.Handler {
 	r := mux.NewRouter()
 	env := handlers.UrzaEnvironment{DB: db}
 
@@ -20,7 +20,7 @@ func buildRouter(db *models.AppDb) http.Handler {
 	api := r.PathPrefix("/api").Subrouter()
 
 	// EXPENSES ROUTES
-	api.Handle("/expenses/{id}", handlers.Register(&env)).Methods("POST").Name("Expenses")
+	api.Handle("/expenses/{id}", handlers.Expenses(&env)).Methods("POST").Name("Expenses")
 
 	return r
 }

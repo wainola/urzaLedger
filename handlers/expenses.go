@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"urza/utils"
 
 	"github.com/google/uuid"
 )
@@ -41,6 +40,10 @@ type GetExpenseResponse struct {
 	createdAt string
 }
 
+func Expenses(appEnvironment *UrzaEnvironment) http.Handler {
+	return UrzaApp{appEnvironment, postExpense}
+}
+
 func PostExpenseValidation(p PostExpenseBody) bool {
 	if p.Amount == 0 {
 		return false
@@ -59,7 +62,7 @@ func HandleErr(err error) {
 	}
 }
 
-func PostExpense(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func postExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
 	body := r.Body
 
 	userId := strings.Split(r.URL.Path, "/")[2]
@@ -81,9 +84,7 @@ func PostExpense(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		json.NewEncoder(w).Encode(responseToSend)
 	}
 
-	defer db.Close()
-
-	tx, err := db.Begin()
+	tx, err := ue.DB.Begin()
 
 	HandleErr(err)
 
@@ -111,6 +112,7 @@ func PostExpense(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(expenseToInsert)
+	return nil
 }
 
 func GetExpense(w http.ResponseWriter, r *http.Request, db *sql.DB) {
@@ -157,14 +159,14 @@ func GetExpense(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 }
 
-func ExpensesRoute(w http.ResponseWriter, r *http.Request) {
-	method := r.Method
+// func ExpensesRoute(w http.ResponseWriter, r *http.Request) {
+// 	method := r.Method
 
-	switch method {
-	case "POST":
-		utils.ValidateHeader(w, r, PostExpense)
-	case "GET":
-		utils.ValidateHeader(w, r, GetExpense)
-	}
+// 	switch method {
+// 	case "POST":
+// 		utils.ValidateHeader(w, r, PostExpense)
+// 	case "GET":
+// 		utils.ValidateHeader(w, r, GetExpense)
+// 	}
 
-}
+// }
