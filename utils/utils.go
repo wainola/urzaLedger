@@ -56,3 +56,9 @@ func InstanceDbConnection() *sql.DB {
 
 	return db
 }
+
+func HandleErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}

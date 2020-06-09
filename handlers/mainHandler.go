@@ -6,7 +6,7 @@ import (
 )
 
 type UrzaEnvironment struct {
-	DB *models.AppDb
+	DB *models.UrzaDB
 }
 
 type UrzaApp struct {

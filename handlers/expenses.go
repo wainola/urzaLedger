@@ -1,14 +1,10 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
-
-	"github.com/google/uuid"
 )
 
 type PostExpenseBody struct {
@@ -21,15 +17,6 @@ type PostExpenseBody struct {
 type Response struct {
 	Code    int
 	Message string
-}
-
-type ExpenseEntity struct {
-	Id        string
-	Expense   string
-	Amount    int
-	Source    string
-	CreatedAt string
-	UserId    string
 }
 
 type GetExpenseResponse struct {
@@ -56,12 +43,6 @@ func PostExpenseValidation(p PostExpenseBody) bool {
 	}
 }
 
-func HandleErr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
 func postExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
 	body := r.Body
 
@@ -84,89 +65,33 @@ func postExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) er
 		json.NewEncoder(w).Encode(responseToSend)
 	}
 
-	tx, err := ue.DB.Begin()
+	result := ue.DB.CreateExpense(bodyToValidate.Date, bodyToValidate.Expense, bodyToValidate.Amount, bodyToValidate.Source, userId)
 
-	HandleErr(err)
-
-	expenseToInsert := ExpenseEntity{
-		uuid.New().String(),
-		bodyToValidate.Expense,
-		bodyToValidate.Amount,
-		bodyToValidate.Source,
-		bodyToValidate.Date,
-		userId,
+	if result {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		res := Response{201, "Created"}
+		json.NewEncoder(w).Encode(res)
 	}
 
-	insertionStmt, err := tx.Prepare("insert into Expenses (id, expense, amount, source, createdAt, user_id) values (?, ?, ?, ?, ?, ?);")
-
-	HandleErr(err)
-
-	defer insertionStmt.Close()
-
-	_, err = insertionStmt.Exec(expenseToInsert.Id, expenseToInsert.Expense, expenseToInsert.Amount, expenseToInsert.Source, expenseToInsert.CreatedAt, expenseToInsert.UserId)
-
-	HandleErr(err)
-
-	tx.Commit()
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(expenseToInsert)
 	return nil
 }
 
-func GetExpense(w http.ResponseWriter, r *http.Request, db *sql.DB) {
-	fmt.Println(r.URL)
+func GetExpenses(appEnvironment *UrzaEnvironment) http.Handler {
+	return UrzaApp{appEnvironment, getExpense}
+}
 
+func getExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
 	userId := strings.Split(r.URL.Path, "/")[2]
 
-	defer db.Close()
+	result := ue.DB.GetExpense(userId)
 
-	tx, err := db.Begin()
-
-	HandleErr(err)
-
-	getStmt, err := tx.Prepare("select id, expense, amount, source, createdAt from Expenses where user_id=?;")
-
-	HandleErr(err)
-
-	defer getStmt.Close()
-
-	rows, err := getStmt.Query(userId)
-
-	defer rows.Close()
-
-	expenses := []GetExpenseResponse{}
-
-	for rows.Next() {
-		var id string
-		var expense string
-		var amount int
-		var source string
-		var createdAt string
-
-		err = rows.Scan(&id, &expense, &amount, &source, &createdAt)
-
-		HandleErr(err)
-
-		expenses = append(expenses, GetExpenseResponse{id, expense, amount, source, createdAt})
-	}
+	fmt.Println("result of getting", result)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&expenses)
-	fmt.Println(expenses)
+	json.NewEncoder(w).Encode(result)
+
+	return nil
 
 }
-
-// func ExpensesRoute(w http.ResponseWriter, r *http.Request) {
-// 	method := r.Method
-
-// 	switch method {
-// 	case "POST":
-// 		utils.ValidateHeader(w, r, PostExpense)
-// 	case "GET":
-// 		utils.ValidateHeader(w, r, GetExpense)
-// 	}
-
-// }
