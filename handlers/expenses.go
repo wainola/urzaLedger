@@ -94,3 +94,11 @@ func getExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) err
 	return nil
 
 }
+
+func EditExpense(appEnvironment *UrzaEnvironment) http.Handler {
+	return UrzaApp{appEnvironment, editExpense}
+}
+
+func editExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
+
+}
