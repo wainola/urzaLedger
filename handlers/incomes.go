@@ -2,9 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
 	"urza/utils"
 )
 
@@ -34,9 +32,7 @@ func PostIncomeValidation(p PostIncomeBody) bool {
 func postIncome(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
 	body := r.Body
 
-	fmt.Println("::::::", len(strings.Split(r.URL.Path, "/")), r.URL.Path)
-
-	userId := utils.GetUserId("incomes", r.URL.Path)
+	_, userId := utils.ExtractUrlToProcess(r.URL.Path, "post", "incomes")
 
 	bodyToValidate := PostIncomeBody{}
 
@@ -72,7 +68,7 @@ func GetIncomes(appEnvironment *UrzaEnvironment) http.Handler {
 }
 
 func getIncomes(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
-	userId := utils.GetUserId("incomes", r.URL.Path)
+	_, userId := utils.ExtractUrlToProcess(r.URL.Path, "post", "incomes")
 
 	result := ue.DB.GetIncomes(userId)
 

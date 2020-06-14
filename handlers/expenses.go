@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"urza/utils"
 )
@@ -46,7 +45,7 @@ func PostExpenseValidation(p PostExpenseBody) bool {
 func postExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
 	body := r.Body
 
-	userId := utils.GetUserId("expenses", r.URL.Path)
+	_, userId := utils.ExtractUrlToProcess(r.URL.Path, "post", "expenses")
 
 	bodyToValidate := PostExpenseBody{}
 	err := json.NewDecoder(body).Decode(&bodyToValidate)
@@ -81,11 +80,9 @@ func GetExpenses(appEnvironment *UrzaEnvironment) http.Handler {
 }
 
 func getExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
-	userId := utils.GetUserId("expenses", r.URL.Path)
+	_, userId := utils.ExtractUrlToProcess(r.URL.Path, "get", "expenses")
 
 	result := ue.DB.GetExpense(userId)
-
-	fmt.Println("result of getting", result)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -100,5 +97,5 @@ func EditExpense(appEnvironment *UrzaEnvironment) http.Handler {
 }
 
 func editExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
-
+	return nil
 }

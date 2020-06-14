@@ -31,8 +31,6 @@ func (db *UrzaDB) CreateIncome(income string, amount int, source string, created
 
 	tx.Commit()
 
-	defer db.DB.Close()
-
 	return true
 }
 
@@ -64,8 +62,6 @@ func (db *UrzaDB) GetIncomes(userId string) []IncomeEntity {
 
 		incomes = append(incomes, IncomeEntity{id, income, amount, source, createdAt})
 	}
-
-	defer db.DB.Close()
 
 	return incomes
 }

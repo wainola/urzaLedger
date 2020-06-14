@@ -83,3 +83,69 @@ func getIndex(splitedUrl []string, routePrefix string) int {
 
 	return indextToSearch + 1
 }
+
+var urlsMap = map[string][]string{
+	"put": []string{
+		"api/expenses/:id/expense/:idExpense",
+		"api/incomes/:id/income/:idIncome",
+	},
+	"post": []string{
+		"api/expenses/:id",
+		"api/incomes/:id",
+	},
+	"get": []string{
+		"api/expenses/:id",
+		"api/incomes/:id",
+	},
+}
+
+func ExtractUrlToProcess(url string, method string, endpointDescriptor string) ([]string, string) {
+	urls := urlsMap[method]
+	var idx int
+
+	for i, url := range urls {
+		if strings.Contains(url, endpointDescriptor) {
+			idx = i
+			break
+		}
+	}
+
+	urlToProcess := urls[idx]
+	idsPositioning := []int{}
+
+	for idx, str := range strings.Split(urlToProcess, "/") {
+		if strings.Contains(str, ":") {
+			idsPositioning = append(idsPositioning, idx)
+		}
+	}
+
+	return getUserId(url, idsPositioning)
+}
+
+func getUserId(url string, positions []int) ([]string, string) {
+	s := strings.Split(url, "/")
+
+	s2 := removeEmptyStrings(s)
+
+	urlId := []string{}
+
+	for _, position := range positions {
+		urlId = append(urlId, s2[position])
+	}
+	if len(urlId) != 1 {
+		return urlId, ""
+	}
+	return []string{}, urlId[0]
+}
+
+func removeEmptyStrings(str []string) []string {
+	newStrSlice := []string{}
+
+	for _, v := range str {
+		if v != "" {
+			newStrSlice = append(newStrSlice, v)
+		}
+	}
+
+	return newStrSlice
+}

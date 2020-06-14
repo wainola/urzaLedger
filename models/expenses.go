@@ -31,8 +31,6 @@ func (db *UrzaDB) CreateExpense(date string, expense string, amount int, source 
 
 	tx.Commit()
 
-	defer db.DB.Close()
-
 	return true
 }
 
@@ -66,8 +64,6 @@ func (db *UrzaDB) GetExpense(userId string) []ExpenseEntity {
 
 		expenses = append(expenses, ExpenseEntity{id, expense, amount, source, createdAt})
 	}
-
-	defer db.DB.Close()
 
 	return expenses
 }
