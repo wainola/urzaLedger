@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"urza/utils"
 )
@@ -24,6 +25,14 @@ type GetExpenseResponse struct {
 	amount    int
 	source    string
 	createdAt string
+}
+
+type PutExpenseBody struct {
+	Id      string
+	Expense string
+	Amount  int
+	Source  string
+	Date    string
 }
 
 func Expenses(appEnvironment *UrzaEnvironment) http.Handler {
@@ -97,5 +106,16 @@ func EditExpense(appEnvironment *UrzaEnvironment) http.Handler {
 }
 
 func editExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
+	ids, _ := utils.ExtractUrlToProcess(r.URL.Path, "put", "expenses")
+
+	body := r.Body
+
+	bodyToValidate := PutExpenseBody{}
+	err := json.NewDecoder(body).Decode(&bodyToValidate)
+
+	utils.HandleErr(err)
+
+	fmt.Println("ids::", ids)
+
 	return nil
 }

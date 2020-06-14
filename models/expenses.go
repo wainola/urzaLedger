@@ -67,3 +67,13 @@ func (db *UrzaDB) GetExpense(userId string) []ExpenseEntity {
 
 	return expenses
 }
+
+func (db *UrzaDB) EditExpense(ids []string) bool {
+	_, err := db.DB.Begin()
+
+	utils.HandleErr(err)
+
+	// putStmt, err :=  tx.Prepare("")
+
+	return true
+}
