@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
+	"urza/utils"
 )
 
 type PostExpenseBody struct {
@@ -46,7 +46,7 @@ func PostExpenseValidation(p PostExpenseBody) bool {
 func postExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
 	body := r.Body
 
-	userId := strings.Split(r.URL.Path, "/")[2]
+	userId := utils.GetUserId("expenses", r.URL.Path)
 
 	bodyToValidate := PostExpenseBody{}
 	err := json.NewDecoder(body).Decode(&bodyToValidate)
@@ -59,7 +59,6 @@ func postExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) er
 
 	if !validation {
 		w.Header().Set("Content-Type", "application/json")
-		validation = PostExpenseValidation(bodyToValidate)
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		responseToSend := Response{http.StatusUnprocessableEntity, "Unprocessable Entity"}
 		json.NewEncoder(w).Encode(responseToSend)
@@ -82,7 +81,7 @@ func GetExpenses(appEnvironment *UrzaEnvironment) http.Handler {
 }
 
 func getExpense(ue *UrzaEnvironment, w http.ResponseWriter, r *http.Request) error {
-	userId := strings.Split(r.URL.Path, "/")[2]
+	userId := utils.GetUserId("expenses", r.URL.Path)
 
 	result := ue.DB.GetExpense(userId)
 

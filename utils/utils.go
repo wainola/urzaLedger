@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -61,4 +62,24 @@ func HandleErr(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func GetUserId(routePrefix string, url string) string {
+	s := strings.Split(url, "/")
+
+	index := getIndex(s, routePrefix)
+
+	return s[index]
+}
+
+func getIndex(splitedUrl []string, routePrefix string) int {
+	var indextToSearch int
+	for idx, v := range splitedUrl {
+		if v == routePrefix {
+			indextToSearch = idx
+			break
+		}
+	}
+
+	return indextToSearch + 1
 }

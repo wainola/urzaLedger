@@ -23,5 +23,9 @@ func buildRouter(db *models.UrzaDB) http.Handler {
 	api.Handle("/expenses/{id}", handlers.Expenses(&env)).Methods("POST").Name("Expenses")
 	api.Handle("/expenses/{id}", handlers.GetExpenses(&env)).Methods("GET").Name("Expenses")
 
+	// INCOME ROUTES
+	api.Handle("/incomes/{id}", handlers.Incomes(&env)).Methods("POST").Name("Incomes")
+	api.Handle("/incomes/{id}", handlers.GetIncomes(&env)).Methods("GET").Name("Get Incomes")
+
 	return r
 }
