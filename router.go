@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"urza/handlers"
 	"urza/models"
@@ -8,12 +9,19 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type Response struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
 func buildRouter(db *models.UrzaDB) http.Handler {
 	r := mux.NewRouter()
 	env := handlers.UrzaEnvironment{DB: db}
 
 	r.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
+		res := Response{200, "Alive"}
 		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(&res)
 	})
 
 	// CREATION OF A SUBROUTER
