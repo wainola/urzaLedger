@@ -3,9 +3,11 @@ package utils
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"reflect"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -148,4 +150,46 @@ func removeEmptyStrings(str []string) []string {
 	}
 
 	return newStrSlice
+}
+
+func ValidateBodyStruct(value reflect.Value) bool {
+	validationResult := []bool{}
+	for i := 0; i < value.NumField(); i++ {
+		fieldType := value.Field(i).Type()
+		fieldValue := value.Field(i).Interface()
+		res := checkAgainstDefaultValues(fieldType, fieldValue, value.Field(i))
+		fmt.Println("field name", value.Field(i))
+		validationResult = append(validationResult, res)
+	}
+
+	var lazyFlag bool
+
+	for _, value := range validationResult {
+		if !value {
+			lazyFlag = value
+			break
+		}
+	}
+	return lazyFlag
+}
+
+const (
+	defaultString  string = ""
+	defaultInt     int    = 0
+	defaultBoolean bool   = false
+)
+
+func checkAgainstDefaultValues(fType reflect.Type, fValue interface{}, field reflect.Value) bool {
+	switch fType.Kind() {
+	case reflect.String:
+		return fValue != defaultString
+	case reflect.Int:
+		return fValue != defaultInt
+	case reflect.Bool:
+		return fValue != defaultBoolean
+	case reflect.Slice:
+		return field.Len() != 0
+	}
+
+	return false
 }
