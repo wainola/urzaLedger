@@ -7,11 +7,11 @@ import (
 )
 
 type ExpenseEntity struct {
-	Id        string
-	Expense   string
-	Amount    int
-	Source    string
-	CreatedAt string
+	Id        string `json:"id"`
+	Expense   string `json:"expense"`
+	Amount    int    `json:"amount"`
+	Source    string `json:"source"`
+	CreatedAt string `json:"createdAt"`
 }
 
 func (db *UrzaDB) CreateExpense(date string, expense string, amount int, source string, userId string) bool {
