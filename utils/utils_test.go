@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -35,4 +36,24 @@ func TestExtractUrlToProcess(t *testing.T) {
 			t.Errorf("Error: expected 123XYZ => have %s", second)
 		}
 	})
+}
+
+func TestValidationBodyStruct(t *testing.T) {
+	var someStruct = struct {
+		Name    string
+		Email   string
+		Married bool
+		Age     int
+		Hobbies []string
+	}{
+		"John Doe",
+		"john@mail.com",
+		false,
+		33,
+		[]string{"computing", "programing languages", "cycling"},
+	}
+
+	value := reflect.ValueOf(someStruct)
+
+	ValidateBodyStruct(value)
 }

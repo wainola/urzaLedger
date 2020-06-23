@@ -157,6 +157,7 @@ func removeEmptyStrings(str []string) []string {
 	return newStrSlice
 }
 
+// FUNCTION THAT VALIDATE THE STRUCTURE OF THE BODY
 func ValidateBodyStruct(value reflect.Value) bool {
 	validationResult := []bool{}
 	for i := 0; i < value.NumField(); i++ {
@@ -178,6 +179,8 @@ func ValidateBodyStruct(value reflect.Value) bool {
 	return lazyFlag
 }
 
+// CONSTANT THAT DEFINE THE DEFAULT VALUES FOR SOME PRIMITIVES
+// THAT ARE IN USE FOR THE API
 const (
 	defaultString  string = ""
 	defaultInt     int    = 0
